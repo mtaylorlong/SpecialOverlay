@@ -6,6 +6,7 @@
 # Usage: SpecialOverlay <grid> <over> 
 # Description: This special tool will append data from one file to another. 
 # This tool was create with a pinch of love, and a dash of magic. 
+# He truly is a blessing. 
 # ---------------------------------------------------------------------------
 
 # Set the necessary product code
