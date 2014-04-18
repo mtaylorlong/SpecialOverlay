@@ -58,8 +58,37 @@ arcpy.CalculateField_management(dataSlice, newVal, formula, "PYTHON_9.3", "")
 arcpy.AddMessage("New " + field + " field calculated")
 
 # Spatial join slice and overlay using correct summary method
-if expression == "SUM":
-    arcpy.SpatialJoin_analysis(overlay, dataSlice, output, "JOIN_ONE_TO_ONE", "KEEP_ALL")
+#-------------------------------------------------------------------------
+
+# Create a new fieldmappings and add the two input feature classes
+fieldmappings = arcpy.FieldMappings()
+fieldmappings.addTable(dataSlice)
+fieldmappings.addTable(overlay)
+
+fieldIndex = fieldmappings.findFieldMapIndex(field)
+fieldmap = fieldmappings.getFieldMap(fieldIndex)
+
+#Get the output field's properties as a field object
+finalField = fieldmap.outputField
+
+# Rename the field and pass the updated field object back into the field map
+finalField.name = str(field) + "_" + str(expression)
+finalField.aliasName = str(field) + "_" + str(expression)
+fieldmap.outputField = finalField
+
+# Set the merge rule
+if expression == "MEAN":
+    fieldmap.mergeRule = "Mean"
+else:
+    fieldmap.mergeRule = "Sum"
+
+# Replace old field map with the updated one 
+fieldmappings.replaceFieldMap(fieldIndex, fieldmap)
+
+#Run the Spatial Join tool
+arcpy.SpatialJoin_analysis(overlay, data, output, "JOIN_ONE_TO_ONE", "KEEP_ALL", fieldmappings, "CONTAINS")
+arcpy.AddMessage("Spatial Join completed")
+arcpy.AddMessage(output + "created")
 
 # Delete area field from data features
 # arcpy.DeleteField_management(data, area)
