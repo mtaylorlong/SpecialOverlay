@@ -16,10 +16,51 @@ import arcpy, sys
 #  4. Summary expression
 #  5. Output feature class name
 
-data = sys.argv[1]
-overlay = sys.argv[2]
-field = sys.argv[3]
-expression = sys.argv[4]
-if expression == '#' or not expression:
-    expression = "SUM"
-output = sys.argv[5]
+data = arcpy.GetParameterAsText(0)
+overlay = arcpy.GetParameterAsText(1)
+field = arcpy.GetParameterAsText(2)
+expression = arcpy.GetParameterAsText(3)        # default value is hard coded as SUM
+output = arcpy.GetParameterAsText(4)
+
+# Create field name variables
+areaOrig = "AREA"                               # original area
+ratio = "RATIO"
+newVal = "VAL_" + str(expression)
+
+# Add new field to data features
+arcpy.AddField_management(data, areaOrig, "FLOAT")
+arcpy.AddMessage("\n" + areaOrig + " field added")
+
+# Calculate area for area field in square meters
+arcpy.CalculateField_management(data, areaOrig, "!shape.area@squaremeters!", "PYTHON_9.3", "")
+arcpy.AddMessage(areaOrig + " field calculated")
+
+# Identity: computes geometric intersection between two feature classes (intermediate data)
+dataSlice = arcpy.Identity_analysis(data, overlay, "in_memory", "NO_FID")
+arcpy.AddMessage("Identity tool completed")
+
+# Add ratio field to dataSlice (identity) feature class
+arcpy.AddField_management(dataSlice, ratio, "FLOAT")
+arcpy.AddMessage(ratio + " field added")
+
+# Calculate ratio of original area to new (slice) area
+arcpy.CalculateField_management(dataSlice, "RATIO", "!SHAPE_Area! / !AREA!", "PYTHON_9.3", "")
+arcpy.AddMessage(ratio + " field calculated")
+
+# Calculate new field value based on summary method
+arcpy.AddField_management(dataSlice, newVal , "FLOAT")
+
+# Create variable for ratio formula
+formula = "!" + str(field) + "! * !RATIO!"
+
+# Calculate new value field based on ratio field
+arcpy.CalculateField_management(dataSlice, newVal, formula, "PYTHON_9.3", "")
+arcpy.AddMessage("New " + field + " field calculated")
+
+# Spatial join slice and overlay using correct summary method
+if expression == "SUM":
+    arcpy.SpatialJoin_analysis(overlay, dataSlice, output, "JOIN_ONE_TO_ONE", "KEEP_ALL")
+
+# Delete area field from data features
+# arcpy.DeleteField_management(data, area)
+arcpy.AddMessage("\n")
