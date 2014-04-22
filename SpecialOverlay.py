@@ -74,13 +74,12 @@ finalField = fieldmap.outputField
 # Rename the field and pass the updated field object back into the field map
 finalField.name = str(field) + "_" + str(expression)
 finalField.aliasName = str(field) + "_" + str(expression)
-fieldmap.outputField = finalField
 
 # Set the merge rule
 if expression == "MEAN":
-    fieldmap.mergeRule = "Mean"
+    fieldmap.mergeRule = 'Mean'
 else:
-    fieldmap.mergeRule = "Sum"
+    fieldmap.mergeRule = 'Sum'
 
 # Replace old field map with the updated one 
 fieldmappings.replaceFieldMap(fieldIndex, fieldmap)
