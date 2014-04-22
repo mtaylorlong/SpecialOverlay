@@ -72,20 +72,20 @@ fieldmap = fieldmappings.getFieldMap(fieldIndex)
 finalField = fieldmap.outputField
 
 # Rename the field and pass the updated field object back into the field map
-finalField.name = str(field) + "_" + str(expression)
-finalField.aliasName = str(field) + "_" + str(expression)
+finalField.name = "VAL_FINAL"
+finalField.aliasName = "Final Value"
 
 # Set the merge rule
-if expression == "MEAN":
-    fieldmap.mergeRule = 'Mean'
-else:
-    fieldmap.mergeRule = 'Sum'
+#if expression == "MEAN":
+#   fieldmap.mergeRule = 'Mean'
+#else:
+fieldmap.mergeRule = "sum"
 
 # Replace old field map with the updated one 
 fieldmappings.replaceFieldMap(fieldIndex, fieldmap)
 
 #Run the Spatial Join tool
-arcpy.SpatialJoin_analysis(overlay, data, output, "JOIN_ONE_TO_ONE", "KEEP_ALL", fieldmappings, "CONTAINS")
+arcpy.SpatialJoin_analysis(overlay, dataSlice, output, "JOIN_ONE_TO_ONE", "KEEP_ALL", fieldmappings, "CONTAINS")
 arcpy.AddMessage("Spatial Join completed")
 arcpy.AddMessage(output + "created")
 
