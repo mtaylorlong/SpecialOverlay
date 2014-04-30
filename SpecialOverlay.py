@@ -53,8 +53,7 @@ arcpy.AddField_management(dataSlice, newVal , "FLOAT")
 # Create variable for ratio formula
 formula = "!" + str(field) + "! * !RATIO!"
 
-# Calculate new value field based on ratio field
-arcpy.CalculateField_management(dataSlice, newVal, formula, "PYTHON_9.3", "")
+# Calculate new value field based on ratio fieldarcpy.CalculateField_management(dataSlice, newVal, formula, "PYTHON_9.3", "")
 arcpy.AddMessage("New " + field + " field calculated")
 
 # Spatial join slice and overlay using correct summary method
@@ -65,7 +64,7 @@ fieldmappings = arcpy.FieldMappings()
 fieldmappings.addTable(dataSlice)
 fieldmappings.addTable(overlay)
 
-fieldIndex = fieldmappings.findFieldMapIndex(field)
+fieldIndex = fieldmappings.findFieldMapIndex(newVal)
 fieldmap = fieldmappings.getFieldMap(fieldIndex)
 
 #Get the output field's properties as a field object
@@ -79,7 +78,7 @@ finalField.aliasName = "Final Value"
 #if expression == "MEAN":
 #   fieldmap.mergeRule = 'Mean'
 #else:
-fieldmap.mergeRule = "sum"
+fieldmap.mergeRule = "Sum"
 
 # Replace old field map with the updated one 
 fieldmappings.replaceFieldMap(fieldIndex, fieldmap)
