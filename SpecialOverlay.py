@@ -73,6 +73,7 @@ finalField = fieldmap.outputField
 # Rename the field and pass the updated field object back into the field map
 finalField.name = "VAL_FINAL"
 finalField.aliasName = "Final Value"
+fieldmap.outputField = finalField
 
 # Set the merge rule
 #if expression == "MEAN":
