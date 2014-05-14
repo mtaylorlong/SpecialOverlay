@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------
 # SpecialOverlay.py
-# Created on: 2014-04-18
+# Created on: 2014-05-16
 #
 # Description: This special tool will append data from one file to another. 
 # The input are two polygon files and a field from the input layer (data
@@ -19,11 +19,11 @@ import arcpy
 data = arcpy.GetParameterAsText(0)
 overlay = arcpy.GetParameterAsText(1)
 field = arcpy.GetParameterAsText(2)
-expression = arcpy.GetParameterAsText(3)	# default value is hard coded as SUM
+expression = arcpy.GetParameterAsText(3)
 output = arcpy.GetParameterAsText(4)
 
 # Create field name variables
-areaOrig = "AREA"	# original area
+areaOrig = "AREA"
 ratio = "RATIO"
 newVal = str(field) + "_" + "NEW"
 finalVal = str(field) + "_" + str(expression)
@@ -93,8 +93,7 @@ fieldmappings.replaceFieldMap(fieldIndex, fieldmap)
 #Run the Spatial Join tool
 arcpy.SpatialJoin_analysis(overlay, dataSlice, output, "JOIN_ONE_TO_ONE", "KEEP_ALL", fieldmappings, "CONTAINS")
 arcpy.AddMessage("Spatial Join completed")
-arcpy.AddMessage(output + "created")
+arcpy.AddMessage("Created " + output)
 
 # Delete in memory file
 arcpy.Delete_management(dataSlice)
-arcpy.AddMessage("\n")
